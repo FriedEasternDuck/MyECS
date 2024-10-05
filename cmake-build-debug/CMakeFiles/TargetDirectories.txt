@@ -1,0 +1,3 @@
+/home/rooster/CLionProjects/MyECS/cmake-build-debug/CMakeFiles/MyECS.dir
+/home/rooster/CLionProjects/MyECS/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/rooster/CLionProjects/MyECS/cmake-build-debug/CMakeFiles/rebuild_cache.dir

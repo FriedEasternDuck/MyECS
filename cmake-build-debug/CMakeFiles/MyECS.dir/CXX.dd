@@ -1,0 +1,13 @@
+ninja_dyndep_version = 1.0
+build CMakeFiles/MyECS.dir/main.cpp.o: dyndep
+
+build CMakeFiles/MyECS.dir/Code/src/EntityManager.cpp.o: dyndep
+
+build CMakeFiles/MyECS.dir/Code/src/Components.cpp.o: dyndep
+
+build CMakeFiles/MyECS.dir/Code/src/Scene.cpp.o: dyndep
+
+build CMakeFiles/MyECS.dir/Code/src/ComponentPool.cpp.o: dyndep
+
+build CMakeFiles/MyECS.dir/Code/src/PhysicsSystem.cpp.o: dyndep
+

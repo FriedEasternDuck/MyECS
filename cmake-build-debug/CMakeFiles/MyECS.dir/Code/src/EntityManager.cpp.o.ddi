@@ -1,0 +1,11 @@
+{
+"rules": [
+{
+"primary-output": "CMakeFiles/MyECS.dir/Code/src/EntityManager.cpp.o",
+"requires": [
+]
+}
+],
+"version": 0,
+"revision": 0
+}
