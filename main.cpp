@@ -9,20 +9,20 @@ int main() {
         auto physicsSystem = std::make_unique<PhysicsSystem>();
         scene->addSystem(std::move(physicsSystem));
         auto player = scene->createEntity();
+        std::vector<Entity> testEntities;
 
         PhysicsComponent physics_component(true);
         PositionComponent position_component;
         scene->addComponent<PhysicsComponent>(player, physics_component);
         scene->addComponent<PositionComponent>(player, position_component);
+        scene->getComponent<PositionComponent>(player).position += glm::vec3(06, 40, 03);
 
-        int x= 0;
-        while (x<10) {
+        PositionComponent testPC{glm::vec3(06,40,93)};
 
-                scene->update();
-                printf("Player Pos: %f\n", scene->getComponent<PositionComponent>(player).position.y);
+        const auto entitiyFromComponent = scene->getEntityFromComponent(testPC);
 
-                x++;
-        }
+        printf("Entity from comp: %d", entitiyFromComponent);
+
 
         return 0;
 }

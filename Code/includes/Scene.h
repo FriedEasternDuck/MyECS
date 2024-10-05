@@ -49,42 +49,40 @@ public:
 
         void freeEntity(Entity entity);
 
-        template
-        <
-                typename ComponentType, typename Component>
-
+        template <typename ComponentType, typename Component>
         void addComponent(Entity entity, Component component) {
                 auto &pool = getComponentPool<ComponentType>();
                 pool.addComponent(entity, component);
+
         }
 
-        template
-        <
-                typename ComponentType>
-
+        template <typename ComponentType>
         void removeComponent(Entity entity) {
                 auto &pool = getComponentPool<ComponentType>();
                 pool.removeComponent(entity);
         }
 
-        template
-        <
-                typename ComponentType>
+        template <typename ComponentType>
         ComponentType &getComponent(Entity entity) {
                 auto &pool = getComponentPool<ComponentType>();
                 return pool.getComponent(entity);
         }
 
-        template
-        <
-                typename ComponentType>
-
+        template <typename ComponentType>
         bool hasComponent(Entity entity) {
                 auto &pool = getComponentPool<ComponentType>();
                 return pool.hasComponent(entity);
         }
 
-        [[nodiscard]] const std::vector<Entity> &entities() const {
+        template <typename T>
+        Entity getEntityFromComponent(T &component) {
+                auto &pool = getComponentPool<T>();
+                return pool.getEntity(component);
+        }
+
+        [[nodiscard]]
+
+        const std::vector<Entity> &entities() const {
                 return _entities;
         }
 

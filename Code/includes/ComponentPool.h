@@ -4,10 +4,13 @@
 
 #ifndef COMPONENTPOOL_H
 #define COMPONENTPOOL_H
+#include <algorithm>
 #include <unordered_map>
 #include <vector>
 #include <cstdint>
 #include <stdexcept>
+
+#include "EntityManager.h"
 
 template<typename T>
 class ComponentPool {
@@ -24,7 +27,7 @@ public:
 
         T &getComponent(Entity entity);
 
-        Entity getEntity(size_t index);
+        Entity getEntity(T &component);
 
         bool hasComponent(const Entity entity) const {
                 return entityToIndex.contains(entity);
@@ -79,8 +82,13 @@ T &ComponentPool<T>::getComponent(Entity entity) {
 }
 
 template<typename T>
-typename ComponentPool<T>::Entity ComponentPool<T>::getEntity(size_t index) {
-        return indexToEntity[index];
+typename ComponentPool<T>::Entity ComponentPool<T>::getEntity(T &component) {
+        auto it = std::find(components.begin(), components.end(), component); // Corrected line
+        if(it != components.end()) {
+                return indexToEntity[std::distance(components.begin(), it)];
+        }
+        printf("Component not registered to any entity\n");
+        return EntityManager::INVALID_ENTITY_ID;
 }
 
 

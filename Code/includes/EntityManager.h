@@ -10,12 +10,13 @@
 #include <vector>
 
 class EntityManager {
-public:
+private:
         using Entity = std::uint32_t;
         static Entity MAX_ENTITIES;
         static Entity NEXT_ENTITY_ID; // initialised to 1,  0 is invalid
         std::vector<Entity> freeEntities; // add freed entities and take new ID's from back
 public:
+        static constexpr Entity INVALID_ENTITY_ID = 0;
         [[nodiscard]] Entity createEntity();
 
         void freeEntity(Entity entity);

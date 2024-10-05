@@ -28305,12 +28305,13 @@ namespace std __attribute__ ((__visibility__ ("default")))
 
 # 12 "/home/rooster/CLionProjects/MyECS/Code/src/../includes/EntityManager.h"
 class EntityManager {
-public:
+private:
         using Entity = std::uint32_t;
         static Entity MAX_ENTITIES;
         static Entity NEXT_ENTITY_ID;
         std::vector<Entity> freeEntities;
 public:
+        static constexpr Entity INVALID_ENTITY_ID = 0;
         [[nodiscard]] Entity createEntity();
 
         void freeEntity(Entity entity);
