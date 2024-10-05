@@ -5,24 +5,29 @@
 #include "Code/includes/Scene.h"
 
 int main() {
-        auto scene = std::make_shared<Scene>();
-        auto physicsSystem = std::make_unique<PhysicsSystem>();
-        scene->addSystem(std::move(physicsSystem));
-        auto player = scene->createEntity();
-        std::vector<Entity> testEntities;
+        auto scene = std::make_unique<Scene>();
+        scene->addSystem(std::make_unique<PhysicsSystem>());
 
-        PhysicsComponent physics_component(true);
-        PositionComponent position_component;
-        scene->addComponent<PhysicsComponent>(player, physics_component);
-        scene->addComponent<PositionComponent>(player, position_component);
-        scene->getComponent<PositionComponent>(player).position += glm::vec3(06, 40, 03);
+        PositionComponent position{glm::vec3(10, 10, 10)};
+        PhysicsComponent physics(true);
+        int entcnt = 0;
+        while (entcnt < 1000000) {
+                auto e = scene->createEntity();
+                scene->addComponent<PositionComponent>(e, position);
+                scene->addComponent<PhysicsComponent>(e, physics);
+                entcnt++;
+                printf("Entity Count: %d\n", entcnt);
+        }
 
-        PositionComponent testPC{glm::vec3(06,40,93)};
-
-        const auto entitiyFromComponent = scene->getEntityFromComponent(testPC);
-
-        printf("Entity from comp: %d", entitiyFromComponent);
-
+        bool running = true;
+        while (running) {
+                scene->update();
+                printf("Entity Position: %f\n", scene->getComponent<PositionComponent>(100).position.y);
+                if (scene->getComponent<PositionComponent>(1000000 - 1).position.y < -10) {
+                        running = false;
+                        printf("Finished\n");
+                }
+        }
 
         return 0;
 }

@@ -75929,12 +75929,8 @@ typename ComponentPool<T>::Entity ComponentPool<T>::getEntity(T &component) {
 # 11 "/home/rooster/CLionProjects/MyECS/Code/src/../includes/Scene.h" 2
 
 # 1 "/home/rooster/CLionProjects/MyECS/Code/src/../includes/SystemBase.h" 1
-
-
-
-
-
-
+# 9 "/home/rooster/CLionProjects/MyECS/Code/src/../includes/SystemBase.h"
+using Entity = std::uint32_t;
 
 class Scene;
 
@@ -75942,7 +75938,7 @@ class Scene;
 class SystemBase {
 public:
         virtual ~SystemBase() = default;
-        virtual void update(Scene &scene) = 0;
+        virtual void update(Scene &scene, Entity entity) = 0;
 };
 # 13 "/home/rooster/CLionProjects/MyECS/Code/src/../includes/Scene.h" 2
 
@@ -75975,8 +75971,10 @@ public:
         }
 
         void update() {
-                for (auto &system: _systems) {
-                        system->update(*this);
+                for (auto e: _entities) {
+                        for (auto &system: _systems) {
+                                system->update(*this, e);
+                        }
                 }
         }
 
@@ -75984,32 +75982,31 @@ public:
 
         void freeEntity(Entity entity);
 
-        template <typename ComponentType, typename Component>
+        template<typename ComponentType, typename Component>
         void addComponent(Entity entity, Component component) {
                 auto &pool = getComponentPool<ComponentType>();
                 pool.addComponent(entity, component);
-
         }
 
-        template <typename ComponentType>
+        template<typename ComponentType>
         void removeComponent(Entity entity) {
                 auto &pool = getComponentPool<ComponentType>();
                 pool.removeComponent(entity);
         }
 
-        template <typename ComponentType>
+        template<typename ComponentType>
         ComponentType &getComponent(Entity entity) {
                 auto &pool = getComponentPool<ComponentType>();
                 return pool.getComponent(entity);
         }
 
-        template <typename ComponentType>
+        template<typename ComponentType>
         bool hasComponent(Entity entity) {
                 auto &pool = getComponentPool<ComponentType>();
                 return pool.hasComponent(entity);
         }
 
-        template <typename T>
+        template<typename T>
         Entity getEntityFromComponent(T &component) {
                 auto &pool = getComponentPool<T>();
                 return pool.getEntity(component);
@@ -103331,6 +103328,9 @@ public:
 
         bool operator==(const PositionComponent &other) const {
                 return position == other.position;
+        }
+        bool operator!=(const PositionComponent &other) const {
+                return position != other.position;
         }
 };
 

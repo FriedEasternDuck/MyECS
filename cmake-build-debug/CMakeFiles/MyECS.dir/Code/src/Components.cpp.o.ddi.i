@@ -44179,6 +44179,9 @@ public:
         bool operator==(const PositionComponent &other) const {
                 return position == other.position;
         }
+        bool operator!=(const PositionComponent &other) const {
+                return position != other.position;
+        }
 };
 
 class VelocityComponent {

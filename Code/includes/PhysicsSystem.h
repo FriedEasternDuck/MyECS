@@ -13,7 +13,7 @@ constexpr float GRAVITY = 9.81f;
 class PhysicsSystem : public SystemBase {
 public:
 
-        void update(Scene& scene) override;
+        void update(Scene& scene, Entity entity) override;
 };
 
 

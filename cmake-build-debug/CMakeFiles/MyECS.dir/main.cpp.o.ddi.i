@@ -72409,6 +72409,9 @@ public:
         bool operator==(const PositionComponent &other) const {
                 return position == other.position;
         }
+        bool operator!=(const PositionComponent &other) const {
+                return position != other.position;
+        }
 };
 
 class VelocityComponent {
@@ -72433,12 +72436,8 @@ public:
 # 1 "/home/rooster/CLionProjects/MyECS/Code/includes/Components.h" 1
 # 8 "/home/rooster/CLionProjects/MyECS/Code/includes/PhysicsSystem.h" 2
 # 1 "/home/rooster/CLionProjects/MyECS/Code/includes/SystemBase.h" 1
-
-
-
-
-
-
+# 9 "/home/rooster/CLionProjects/MyECS/Code/includes/SystemBase.h"
+using Entity = std::uint32_t;
 
 class Scene;
 
@@ -72446,7 +72445,7 @@ class Scene;
 class SystemBase {
 public:
         virtual ~SystemBase() = default;
-        virtual void update(Scene &scene) = 0;
+        virtual void update(Scene &scene, Entity entity) = 0;
 };
 # 9 "/home/rooster/CLionProjects/MyECS/Code/includes/PhysicsSystem.h" 2
 
@@ -72456,7 +72455,7 @@ constexpr float GRAVITY = 9.81f;
 class PhysicsSystem : public SystemBase {
 public:
 
-        void update(Scene& scene) override;
+        void update(Scene& scene, Entity entity) override;
 };
 # 5 "/home/rooster/CLionProjects/MyECS/main.cpp" 2
 # 1 "/home/rooster/CLionProjects/MyECS/Code/includes/Scene.h" 1
@@ -104919,8 +104918,10 @@ public:
         }
 
         void update() {
-                for (auto &system: _systems) {
-                        system->update(*this);
+                for (auto e: _entities) {
+                        for (auto &system: _systems) {
+                                system->update(*this, e);
+                        }
                 }
         }
 
@@ -104928,32 +104929,31 @@ public:
 
         void freeEntity(Entity entity);
 
-        template <typename ComponentType, typename Component>
+        template<typename ComponentType, typename Component>
         void addComponent(Entity entity, Component component) {
                 auto &pool = getComponentPool<ComponentType>();
                 pool.addComponent(entity, component);
-
         }
 
-        template <typename ComponentType>
+        template<typename ComponentType>
         void removeComponent(Entity entity) {
                 auto &pool = getComponentPool<ComponentType>();
                 pool.removeComponent(entity);
         }
 
-        template <typename ComponentType>
+        template<typename ComponentType>
         ComponentType &getComponent(Entity entity) {
                 auto &pool = getComponentPool<ComponentType>();
                 return pool.getComponent(entity);
         }
 
-        template <typename ComponentType>
+        template<typename ComponentType>
         bool hasComponent(Entity entity) {
                 auto &pool = getComponentPool<ComponentType>();
                 return pool.hasComponent(entity);
         }
 
-        template <typename T>
+        template<typename T>
         Entity getEntityFromComponent(T &component) {
                 auto &pool = getComponentPool<T>();
                 return pool.getEntity(component);
@@ -104995,24 +104995,29 @@ ComponentPool<T> &Scene::getComponentPool() {
 # 6 "/home/rooster/CLionProjects/MyECS/main.cpp" 2
 
 int main() {
-        auto scene = std::make_shared<Scene>();
-        auto physicsSystem = std::make_unique<PhysicsSystem>();
-        scene->addSystem(std::move(physicsSystem));
-        auto player = scene->createEntity();
-        std::vector<Entity> testEntities;
+        auto scene = std::make_unique<Scene>();
+        scene->addSystem(std::make_unique<PhysicsSystem>());
 
-        PhysicsComponent physics_component(true);
-        PositionComponent position_component;
-        scene->addComponent<PhysicsComponent>(player, physics_component);
-        scene->addComponent<PositionComponent>(player, position_component);
-        scene->getComponent<PositionComponent>(player).position += glm::vec3(06, 40, 03);
+        PositionComponent position{glm::vec3(10, 10, 10)};
+        PhysicsComponent physics(true);
+        int entcnt = 0;
+        while (entcnt < 1000000) {
+                auto e = scene->createEntity();
+                scene->addComponent<PositionComponent>(e, position);
+                scene->addComponent<PhysicsComponent>(e, physics);
+                entcnt++;
+                printf("Entity Count: %d\n", entcnt);
+        }
 
-        PositionComponent testPC{glm::vec3(06,40,93)};
-
-        const auto entitiyFromComponent = scene->getEntityFromComponent(testPC);
-
-        printf("Entity from comp: %d", entitiyFromComponent);
-
+        bool running = true;
+        while (running) {
+                scene->update();
+                printf("Entity Position: %f\n", scene->getComponent<PositionComponent>(100).position.y);
+                if (scene->getComponent<PositionComponent>(1000000 - 1).position.y < -10) {
+                        running = false;
+                        printf("Finished\n");
+                }
+        }
 
         return 0;
 }
